@@ -7,14 +7,17 @@
 
 #|Constructor|#
 (define (option code message ChatbotCodeLink FlowCodeLink . Keyword)
-  (list code message ChatbotCodeLink FlowCodeLink Keyword))
+  (if(option?(list code message ChatbotCodeLink FlowCodeLink Keyword))
+     (list code message ChatbotCodeLink FlowCodeLink Keyword)
+     "Los parametros ingresados no corresponden " ))
 
 #|Pertenencia|#
 (define(option? op) (if(integer? (select-code op))
                        (if(string? (select-message op))
                           (if(integer? (select-ChatbotCodeLink op))
                              (if(integer? (select-FlowCodeLink op))
-                                (if(map string?(select-Keyword op))
+                                (if(or (map string?(select-Keyword op))
+                                       (map null?(select-Keyword op)))
                                         #t #f)#f)#f)#f)#f)) 
 #|Selectores|#
 ;SelectCode
