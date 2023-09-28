@@ -2,18 +2,18 @@
 (require "TDAOption.rkt")
 (require "TDAFlow.rkt")
 (provide (all-defined-out))
+#|..........................TDAChatbot..........................|#
 
-#|Constructor|#
+#|..........................Constructor..........................|#
 ;Nombre de la función:
 ;Dominio:
 ;Recorrido:
 ;Tipo de recursion:
 ;Descripción de la función:
-(define (chatbot id name welcomeMessage . flows)
-  (if(chatbot? (list id name welcomeMessage flows))
-     (if(integer? (flow-uniques-id(list id name welcomeMessage flows)))
-                  "IDs de flow repetidos"
-                  (list id name welcomeMessage flows))#f))
+(define (chatbot id name welcomeMessage startFlowId . flows)
+  (list id name welcomeMessage startFlowId (if(not(null? flows))
+                                           (remove (list)(new-flow flows))
+                                           flows)))
 #|Pertenencia|#
 ;Nombre de la función:
 ;Dominio:
@@ -24,34 +24,30 @@
   (if(integer? (select-chatbot-id chatbot))
      (if(string? (select-chatbot-name chatbot))
         (if(string? (select-chatbot-wM chatbot))
-           (if(or(empty?(select-chatbot-flow chatbot))
-                 (map flow?(select-chatbot-flow chatbot))
-                 )#t #f)#f)#f)#f))
+           (if(integer?(select-chatbot-sFId chatbot))
+              (if(or(empty?(select-chatbot-flow chatbot))
+                    (map flow?(select-chatbot-flow chatbot))
+                 )#t #f)#f)#f)#f)#f))
 
-#|Modificadores|#
+#|..........................Modificadores..........................|#
 ;Nombre de la función:
 ;Dominio:
 ;Recorrido:
 ;Tipo de recursion:
 ;Descripción de la función:
-(define (chatbot-add-flow cb flow)
-  (define (aux cb flow new-chatbot)
-               (if(list? cb)
-                  (if(integer?
-                      (flow-uniques-id(list
-                                       (select-chatbot-id new-chatbot)
-                                       (select-chatbot-name new-chatbot)
-                                       (select-chatbot-wM new-chatbot)
-                                       (append(select-chatbot-flow new-chatbot)
-                                              (list flow)))))
-                     "Ids de flow repetidos"
-                     (list (select-chatbot-id new-chatbot)(select-chatbot-name new-chatbot)
-                           (select-chatbot-wM new-chatbot)
-                           (append(select-chatbot-flow new-chatbot)(list flow))))
-                  (aux(cdr cb) flow new-chatbot)))
-  (aux cb flow cb))
+(define (chatbot-add-flow chatbot flow)
+  (list(select-chatbot-id chatbot)(select-chatbot-name chatbot)
+       (select-chatbot-wM chatbot)(select-chatbot-sFId chatbot)
+       (add-flow (select-chatbot-flow chatbot)flow)))
 
-#|Selectores|#
+(define(add-flow chatbot-flow flow)
+  (if(boolean?(member (select-flow-id flow)(get-flow-ids chatbot-flow)))
+     (if(null? chatbot-flow)
+        (cons flow null)
+        (cons(car chatbot-flow)(add-flow (cdr chatbot-flow) flow)))
+     chatbot-flow))
+
+#|..........................Selectores..........................|#
 ;Nombre de la función:
 ;Dominio:
 ;Recorrido:
@@ -78,15 +74,40 @@
 ;Recorrido:
 ;Tipo de recursion:
 ;Descripción de la función:
-(define(select-chatbot-flow chatbot)(cadddr chatbot))
+(define(select-chatbot-sFId chatbot)(cadddr chatbot))
 
-#|Otros|#
 ;Nombre de la función:
 ;Dominio:
 ;Recorrido:
 ;Tipo de recursion:
 ;Descripción de la función:
-(define (flow-uniques-id chatbot)
-  (check-duplicates(append(list )
-                          (map select-id(select-chatbot-flow chatbot)))
-                   #:default #t))
+(define(select-chatbot-flow chatbot)(list-ref chatbot 4))
+
+#|..........................Otros..........................|#
+;Nombre de la función:
+;Dominio:
+;Recorrido:
+;Tipo de recursion:
+;Descripción de la función:
+(define new-flow(lambda(flow)
+  (define create-flow(lambda(flow ids)
+    (if(not (null? (cdr flow)))
+       (if (list?(member (select-flow-id (car flow)) ids))
+        (cons(car flow)(create-flow(cdr flow)(remove (select-flow-id (car flow)) ids)))
+        (create-flow(cdr flow) ids ))
+       (if (list?(member (select-flow-id (car flow)) ids))
+        (cons(car flow) null)
+        (cons null null )))))
+                    (create-flow flow (get-flow-ids flow))))
+
+
+;Nombre de la función:
+;Dominio:
+;Recorrido:
+;Tipo de recursion:
+;Descripción de la función:
+(define (get-flow-ids flow)
+  (if(not(null? flow))
+     (remove-duplicates (map select-flow-id flow))
+     (list)))
+
