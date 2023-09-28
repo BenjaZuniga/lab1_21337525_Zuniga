@@ -1,3 +1,6 @@
+#lang racket
+(require "TDAOption.rkt")
+(provide (all-defined-out))
 #|..........................TDA Flow..........................|#
 
 #|..........................Constructor..........................|#
