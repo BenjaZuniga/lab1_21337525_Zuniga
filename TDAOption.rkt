@@ -1,7 +1,7 @@
 #lang racket
 (provide (all-defined-out))
 
-#|TDA Option|#
+#|..........................TDA Option..........................|#
 
 
 
@@ -11,9 +11,9 @@
 ;Recorrido:
 ;Tipo de recursion:
 ;Descripción de la función:
-(define (option code message ChatbotCodeLink FlowCodeLink . Keyword)
-  (if(option?(list code message ChatbotCodeLink FlowCodeLink Keyword))
-     (list code message ChatbotCodeLink FlowCodeLink Keyword)
+(define (option code message ChatbotCodeLink InicialFlowCodeLink . Keyword)
+  (if(option?(list code message ChatbotCodeLink InicialFlowCodeLink Keyword))
+     (list code message ChatbotCodeLink InicialFlowCodeLink Keyword)
      "Los parametros ingresados no corresponden " ))
 
 #|..........................Pertenencia..........................|#
@@ -22,12 +22,12 @@
 ;Recorrido:
 ;Tipo de recursion:
 ;Descripción de la función:
-(define(option? op) (if(integer? (select-code op))
-                       (if(string? (select-message op))
-                          (if(integer? (select-ChatbotCodeLink op))
-                             (if(integer? (select-FlowCodeLink op))
-                                (if(or (map string?(select-Keyword op))
-                                       (map null?(select-Keyword op)))
+(define(option? op) (if(integer? (select-option-code op))
+                       (if(string? (select-option-message op))
+                          (if(integer? (select-option-ChatbotCodeLink op))
+                             (if(integer? (select-option-InicialFlowCodeLink op))
+                                (if(or (map string?(select-option-Keyword op))
+                                       (null?(select-option-Keyword op)))
                                         #t #f)#f)#f)#f)#f)) 
 #|..........................Selectores..........................|#
 ;Nombre de la función:
@@ -35,34 +35,36 @@
 ;Recorrido:
 ;Tipo de recursion:
 ;Descripción de la función:
-(define(select-code op)(car op))
+(define(select-option-code op)(car op))
 
 ;Nombre de la función:
 ;Dominio:
 ;Recorrido:
 ;Tipo de recursion:
 ;Descripción de la función:
-(define(select-message op)(cadr op))
+(define(select-option-message op)(cadr op))
 
 ;Nombre de la función:
 ;Dominio:
 ;Recorrido:
 ;Tipo de recursion:
 ;Descripción de la función:
-(define(select-ChatbotCodeLink op)(caddr op))
+(define(select-option-ChatbotCodeLink op)(caddr op))
 
 ;Nombre de la función:
 ;Dominio:
 ;Recorrido:
 ;Tipo de recursion:
 ;Descripción de la función:
-(define(select-FlowCodeLink op)(cadddr op))
+(define(select-option-InicialFlowCodeLink op)(cadddr op))
 
 ;Nombre de la función:
 ;Dominio:
 ;Recorrido:
 ;Tipo de recursion:
 ;Descripción de la función:
-(define(select-Keyword op)(list-ref op 4))
+(define(select-option-Keyword op)(list-ref op 4))
 
 #|..........................Modificadores..........................|#
+
+#|..........................Otros..........................|#
