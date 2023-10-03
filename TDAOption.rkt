@@ -13,7 +13,8 @@
 ;Descripción de la función:
 (define (option code message ChatbotCodeLink InicialFlowCodeLink . Keyword)
   (if(option?(list code message ChatbotCodeLink InicialFlowCodeLink Keyword))
-     (list code message ChatbotCodeLink InicialFlowCodeLink Keyword)
+     (list code message ChatbotCodeLink InicialFlowCodeLink (append (map string-downcase Keyword)
+                                                                    (list(~a(string-ref message 0)))))
      "Los parametros ingresados no corresponden " ))
 
 #|..........................Pertenencia..........................|#
@@ -64,6 +65,7 @@
 ;Tipo de recursion:
 ;Descripción de la función:
 (define(select-option-Keyword op)(list-ref op 4))
+
 
 #|..........................Modificadores..........................|#
 
