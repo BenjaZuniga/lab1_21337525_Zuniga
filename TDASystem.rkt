@@ -5,7 +5,6 @@
 (require "TDAUser.rkt")
 (require "TDAChathistory.rkt")
 (provide(all-defined-out))
-#|..........................TDASystem..........................|#
 
 #|..........................Constructor..........................|#
 ;Nombre de la función:
@@ -14,11 +13,10 @@
 ;Tipo de recursion:
 ;Descripción de la función:
 (define (system name InicialChatbotCodeLink . chatbot)
-  (list InicialChatbotCodeLink user (list) name InicialChatbotCodeLink
-        (get-flow-id chatbot InicialChatbotCodeLink)
-        (if(not(null? chatbot))
-           (remove (list)(new-chatbot chatbot))
-            chatbot)))
+  (list InicialChatbotCodeLink user chathistory name
+        (list) (list) (list)(if(not(null? chatbot))
+                               (remove (list)(new-chatbot chatbot))
+                                chatbot)))
 
 #|..........................Pertenencia..........................|#
 
@@ -28,7 +26,7 @@
 ;Recorrido:
 ;Tipo de recursion:
 ;Descripción de la función:
-(define (select-default-chatbot-id sys)(car sys))
+(define (select-system-InicialChatbotCodeLink sys)(car sys))
 
 ;Nombre de la función:
 ;Dominio:
@@ -56,17 +54,29 @@
 ;Recorrido:
 ;Tipo de recursion:
 ;Descripción de la función:
-(define(select-system-inicialCbCL sys)(list-ref sys 4))
+(define(select-system-option-chatbots sys)(list-ref sys 4))
 
 ;Nombre de la función:
 ;Dominio:
 ;Recorrido:
 ;Tipo de recursion:
 ;Descripción de la función:
-(define(select-system-inicialFlow sys)(list-ref sys 5))
+(define(select-system-option-flows sys)(list-ref sys 5))
 
 
-(define(select-system-chatbot sys)(list-ref sys 6))
+;Nombre de la función:
+;Dominio:
+;Recorrido:
+;Tipo de recursion:
+;Descripción de la función:
+(define(select-system-option-keywords sys)(list-ref sys 6))
+
+;Nombre de la función:
+;Dominio:
+;Recorrido:
+;Tipo de recursion:
+;Descripción de la función:
+(define(select-system-chatbot sys)(list-ref sys 7))
 
 #|..........................Modificador..........................|#
 ;Nombre de la función:
@@ -75,12 +85,12 @@
 ;Tipo de recursion:
 ;Descripción de la función:
 (define(system-add-chatbot system chatbot)
- (if(boolean?(member (select-chatbot-id chatbot)
+ (if(boolean?(member (select-system-InicialChatbotCodeLink chatbot)
                      (get-chatbot-ids (select-system-chatbot system))))
-    (list (select-default-chatbot-id system)(select-user system)
+    (list (select-system-InicialChatbotCodeLink chatbot)(select-user system)
           (select-system-chathistory system)
-          (select-system-name system)(select-system-inicialCbCL system)
-          (select-system-inicialFlow system)
+          (select-system-name system)(select-system-option-chatbots system)
+          (select-system-option-flows system) (select-system-option-keywords system)
           (append (select-system-chatbot system)(list chatbot)))
     system))
 
@@ -91,14 +101,14 @@
 ;Descripción de la función:
 (define (system-add-user system user)
   (if(boolean? (member user (select-user-register(select-user system))))
-     (list (select-default-chatbot-id system)
-        (list(append(select-user-register(select-user system))
+     (list (select-system-InicialChatbotCodeLink system)
+           (list(append(select-user-register(select-user system))
                     (list user ))
              (select-user-login(select-user system)))
-        (select-system-chathistory system)
-        (select-system-name system)(select-system-inicialCbCL system)
-        (select-system-inicialFlow system)
-        (select-system-chatbot system))
+          (append(select-system-chathistory system)(list(list)))
+          (select-system-name system)(select-system-option-chatbots system)
+          (select-system-option-flows system) (select-system-option-keywords system)
+          (select-system-chatbot system))
      system))
     
 
@@ -110,13 +120,14 @@
 (define(system-login sys user)
   (if(and(empty? (select-user-login(select-user sys)))
          (not(boolean? (member user (select-user-register(select-user sys))))))
-     (list (select-default-chatbot-id sys) 
+     (list (select-system-InicialChatbotCodeLink sys) 
            (list (select-user-register(select-user sys))
                  (append (select-user-login(select-user sys))
                          (list user)))
            (select-system-chathistory sys)
-           (select-system-name sys) (select-system-inicialCbCL sys)
-           (select-system-inicialFlow sys)(select-system-chatbot sys))
+           (select-system-name sys)(select-system-option-chatbots sys)
+           (select-system-option-flows sys) (select-system-option-keywords sys)
+           (select-system-chatbot sys))
         sys))
 
 ;Nombre de la función:
@@ -125,47 +136,135 @@
 ;Tipo de recursion:
 ;Descripción de la función:
 (define (system-logout sys)
-  (list (select-default-chatbot-id sys)
+  (list (select-system-InicialChatbotCodeLink sys)
         (list (select-user-register(select-user sys))
               (list))
         (select-system-chathistory sys)
-        (select-system-name sys)(select-default-chatbot-id sys)
-        (select-system-inicialFlow sys)(select-system-chatbot sys)))
+        (select-system-name sys)(list)
+        (list) (list)
+        (select-system-chatbot sys)))
 
 #|..........................Otros..........................|#
+;Nombre de la función:
+;Dominio:
+;Recorrido:
+;Tipo de recursion:
+;Descripción de la función:
 (define (system-talk-rec system message)
   (if(not(empty? (select-user-login(select-user system))))
-     (search system (select-system-chatbot system)
-                  (select-system-inicialCbCL system)
-                  (select-system-inicialFlow system ) message  
-                  (select-system-chathistory system))
+     (if(empty?(select-system-option-keywords system))
+        (search-rec system
+                          (select-system-chatbot system)
+                          (select-system-InicialChatbotCodeLink system)
+                          (get-inicialFlowId(select-system-chatbot system)(select-system-InicialChatbotCodeLink system)) 
+                          (list (~a(current-seconds))"-"(get-user-login(select-user system))": " message "\n"))
+        (search-rec system (select-system-chatbot system)
+                    (list-ref (select-system-option-chatbots system)
+                              (index-where(select-system-option-keywords system)
+                                          (lambda(keyword)(string-contains? keyword (string-downcase message)))))
+                    (list-ref (select-system-option-flows system)
+                              (index-where(select-system-option-keywords system)
+                                          (lambda(keyword)(string-contains? keyword (string-downcase message))))) 
+                    (list (~a(current-seconds))"-"(get-user-login(select-user system))": " message "\n")))
+     system))
+;Nombre de la función:
+;Dominio:
+;Recorrido:
+;Tipo de recursion:
+;Descripción de la función:
+(define(search-rec system tdas id1 id2 history)
+  (cond
+       [(chatbot? (car tdas))
+        (if(equal? id1 (select-chatbot-id (car tdas)))
+           (search-rec system (select-chatbot-flow (car tdas)) "-" id2
+                             (append history (list (~a(current-seconds))"-" (select-chatbot-name (car tdas))" ")))
+           (search-rec system (cdr tdas) id1 id2 history))]
+       [(flow?(car tdas))
+        (if(equal? id2 (select-flow-id(car tdas)))
+           (list (select-system-InicialChatbotCodeLink system)
+                 (select-user system)
+                 (list-set (select-system-chathistory system)
+                           (index-of(select-user-register(select-user system))(get-user-login(select-user system)))
+                           (append(list-ref (select-system-chathistory system)
+                                            (index-of(select-user-register(select-user system))
+                                                     (get-user-login(select-user system))))
+                                  history
+                                  (list (select-flow-name (car tdas)) "\n")
+                                  (map (lambda(message)(string-append message"\n"))
+                                       (map select-option-message (select-flow-Option (car tdas))))))
+               (select-system-name system)(get-option-chatbots-ids(select-flow-Option(car tdas)))
+               (get-option-flows-ids(select-flow-Option(car tdas)))(get-option-Keyword(select-flow-Option(car tdas)))(select-system-chatbot system))
+           (search-rec system (cdr tdas) id1 id2 history))]))
+
+
+;Nombre de la función:
+;Dominio:
+;Recorrido:
+;Tipo de recursion:
+;Descripción de la función:
+(define (system-talk-norec system message)
+  (if(not(empty?(select-user-login(select-user system))))
+     (if(empty?(select-system-option-keywords system))
+        (let([chatbot(list-ref (select-system-chatbot system)
+            (index-of (get-chatbot-ids (select-system-chatbot system))
+                      (select-system-InicialChatbotCodeLink system)))])
+            (let([flow(list-ref (select-chatbot-flow chatbot)
+                                (index-of (get-flow-ids (select-chatbot-flow chatbot))
+                                (select-chatbot-sFId chatbot)))])
+                (list (select-system-InicialChatbotCodeLink system)
+                      (select-user system)
+                      (list-set (select-system-chathistory system)
+                         (index-of(select-user-register(select-user system))(get-user-login(select-user system)))
+                         (append(list-ref (select-system-chathistory system)(index-of(select-user-register(select-user system))
+                                                                           (get-user-login(select-user system))))
+                              (list (string-append (~a(current-seconds))"-"(get-user-login(select-user system))": " message "\n"
+                                                   (~a(current-seconds))"-" (select-chatbot-name chatbot)" "
+                                                    (select-flow-name flow) "\n"))
+                              (map (lambda(message)(string-append message"\n"))
+                                   (map select-option-message (select-flow-Option flow)))))
+                      (select-system-name system)
+                      (get-option-chatbots-ids(select-flow-Option flow))
+                      (get-option-flows-ids(select-flow-Option flow))
+                      (get-option-Keyword(select-flow-Option flow))
+                      (select-system-chatbot system))))
+          
+        (let([chatbot(list-ref (select-system-chatbot system)
+            (index-of (get-chatbot-ids (select-system-chatbot system))
+                      (list-ref (select-system-option-chatbots system)
+                              (index-where(select-system-option-keywords system)
+                                          (lambda(keyword)(string-contains? keyword (string-downcase message)))))))])
+            (let([flow(list-ref (select-chatbot-flow chatbot)
+                                (index-of (get-flow-ids (select-chatbot-flow chatbot))
+                                          (list-ref (select-system-option-flows system)
+                                          (index-where(select-system-option-keywords system)
+                                          (lambda(keyword)(string-contains? keyword (string-downcase message)))))))])
+                (list (select-system-InicialChatbotCodeLink system)
+                      (select-user system)
+                      (list-set (select-system-chathistory system)
+                         (index-of(select-user-register(select-user system))(get-user-login(select-user system)))
+                         (append(list-ref (select-system-chathistory system)(index-of(select-user-register(select-user system))
+                                                                           (get-user-login(select-user system))))
+                              (list (string-append (~a(current-seconds))"-"(get-user-login(select-user system))": " message "\n"
+                                                   (~a(current-seconds))"-" (select-chatbot-name chatbot)" "
+                                                    (select-flow-name flow) "\n"))
+                              (map (lambda(message)(string-append message"\n"))
+                                   (map select-option-message (select-flow-Option flow)))))
+                      (select-system-name system)
+                      (get-option-chatbots-ids(select-flow-Option flow))
+                      (get-option-flows-ids(select-flow-Option flow))
+                      (get-option-Keyword(select-flow-Option flow))
+                      (select-system-chatbot system)))))
      system))
 
-(define(search system tda id1 id2 message history)
-    (cond
-          [(null? tda) history]
-          [(option? (car tda))
-           (if(or(string-contains? ( select-option-message (car tda)) message)
-                 (list?(member message (select-option-Keyword (car tda))))
-                 (empty?(select-system-chathistory system)))
-              (list (append history (map select-option-message tda))(select-user system)
-                   (select-system-name system)(select-option-ChatbotCodeLink (car tda))
-                   (select-option-InicialFlowCodeLink (car tda))(select-system-chatbot system))
-              (search system (cdr tda) id1 id2 message history))]
-          [(and(equal? id1 (caar tda))(chatbot? (car tda)))
-           (search system (select-chatbot-flow (car tda)) 90503
-                   id2 message
-                   (append history
-                           (list (string-append(~a(current-seconds)) "-"(cadar(select-user system))": "message "\n")
-                                 (~a(current-seconds))"-"(select-chatbot-name (car tda))": ")))]
-          [(and(not(equal? id1 (caar tda)))(chatbot? (car tda)))
-               (search system (cdr tda)id1 id2 message history)]
-          [(and(equal? id2 (caar tda))(flow?(car tda)))
-               (search system (select-flow-Option (car tda))id1
-                       99999 message
-                       (append history (list(select-flow-name(car tda)))))]
-          [(not(equal? id2 (caar tda)))
-               (search system (cdr tda)id1 id2 message history)]))
+;Nombre de la función:
+;Dominio:
+;Recorrido:
+;Tipo de recursion:
+;Descripción de la función:
+(define(system-synthesis system user)
+  (list-ref (select-system-chathistory system)
+            (index-of (select-user-register(select-user system))user) ))
+
 ;Nombre de la función:
 ;Dominio:
 ;Recorrido:
@@ -193,9 +292,10 @@
      (remove-duplicates (map select-chatbot-id chatbot))
      (list)))
 
-(define (get-flow-id chatbot id)
-  (cond
-          [(equal? id (caar chatbot))
-           (select-chatbot-sFId (car chatbot))]
-          [(not(equal? id (caar chatbot)))
-               (get-flow-id (cdr chatbot)id)]))
+;Nombre de la función:
+;Dominio:
+;Recorrido:
+;Tipo de recursion:
+(define (get-inicialFlowId chatbots id)
+  (let([chatbot (list-ref chatbots (index-of(get-chatbot-ids chatbots)id))])
+   (select-chatbot-sFId chatbot)))
