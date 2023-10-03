@@ -2,7 +2,6 @@
 (require "TDAOption.rkt")
 (require "TDAFlow.rkt")
 (provide (all-defined-out))
-#|..........................TDAChatbot..........................|#
 
 #|..........................Constructor..........................|#
 ;Nombre de la función:
@@ -110,4 +109,3 @@
   (if(not(null? flow))
      (remove-duplicates (map select-flow-id flow))
      (list)))
-
