@@ -88,3 +88,33 @@
   (if(not(null? option))
      (remove-duplicates (map select-option-code option))
      (list)))
+
+;Nombre de la función:
+;Dominio:
+;Recorrido:
+;Tipo de recursion:
+;Descripción de la función:
+(define (get-option-chatbots-ids option)
+  (if(not(null? option))
+     (map select-option-ChatbotCodeLink option)
+     (list)))
+
+;Nombre de la función:
+;Dominio:
+;Recorrido:
+;Tipo de recursion:
+;Descripción de la función:
+(define (get-option-flows-ids option)
+  (if(not(null? option))
+     (map select-option-InicialFlowCodeLink option)
+     (list)))
+
+;Nombre de la función:
+;Dominio:
+;Recorrido:
+;Tipo de recursion:
+;Descripción de la función:
+(define (get-option-Keyword option)
+  (if(not(null? option))
+     (map ~a(map select-option-Keyword option))
+     (list)))
