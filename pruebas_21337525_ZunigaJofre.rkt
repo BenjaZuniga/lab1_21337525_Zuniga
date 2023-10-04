@@ -1,10 +1,10 @@
 #lang racket
-(require "TDAOption_21337525_ZuñigaJofre.rkt")
-(require "TDAFlow_21337525_ZuñigaJofre.rkt")
-(require "TDAChatbot_21337525_ZuñigaJofre.rkt")
-(require "TDAUser_21337525_ZuñigaJofre.rkt")
-(require "TDAChathistory_21337525_ZuñigaJofre.rkt")
-(require "TDASystem_21337525_ZuñigaJofre.rkt")
+(require "TDAOption_21337525_ZunigaJofre.rkt")
+(require "TDAFlow_21337525_ZunigaJofre.rkt")
+(require "TDAChatbot_21337525_ZunigaJofre.rkt")
+(require "TDAUser_21337525_ZunigaJofre.rkt")
+(require "TDAChathistory_21337525_ZunigaJofre.rkt")
+(require "TDASystem_21337525_ZunigaJofre.rkt")
 
 ;Script de Pruebas Enunciado
 
