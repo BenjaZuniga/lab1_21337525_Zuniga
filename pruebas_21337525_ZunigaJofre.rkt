@@ -54,16 +54,7 @@
 (define s8 (system-login s7 "user2"))
 (define s9 (system-logout s8))
 (define s10 (system-login s9 "user2"))
-(define s1 (system-add-chatbot s0 cb0)) ;igual a s0
-(define s2 (system-add-user s1 "user1"))
-(define s3 (system-add-user s2 "user2"))
-(define s4 (system-add-user s3 "user2"))
-(define s5 (system-add-user s4 "user3"))
-(define s6 (system-login s5 "user8"))
-(define s7 (system-login s6 "user1"))
-(define s8 (system-login s7 "user2"))
-(define s9 (system-logout s8))
-(define s10 (system-login s9 "user2"))
+
 ;las siguientes interacciones deben funcionar de igual manera con system-talk-rec  o system-talk-norec 
 (define s11 (system-talk-rec s10 "hola"))
 (define s12 (system-talk-rec s11 "1"))
@@ -73,3 +64,12 @@
 (define s16 (system-talk-rec s15 "3"))
 (define s17 (system-talk-rec s16 "5"))
 (display (system-synthesis s17 "user2"))
+
+(define s18 (system-talk-norec s10 "hola"))
+(define s19 (system-talk-norec s18 "1"))
+(define s20 (system-talk-norec s19 "1"))
+(define s21 (system-talk-norec s20 "Museo"))
+(define s22 (system-talk-norec s21 "1"))
+(define s23 (system-talk-norec s22 "3"))
+(define s24 (system-talk-norec s23 "5"))
+(display (system-synthesis s24 "user2"))
