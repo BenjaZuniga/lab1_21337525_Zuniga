@@ -1,9 +1,9 @@
 #lang racket
-(require "TDAOption.rkt")
-(require "TDAFlow.rkt")
-(require "TDAChatbot.rkt")
-(require "TDAUser.rkt")
-(require "TDAChathistory.rkt")
+(require "TDAOption_21337525_ZuñigaJofre.rkt")
+(require "TDAFlow_21337525_ZuñigaJofre.rkt")
+(require "TDAChatbot_21337525_ZuñigaJofre.rkt")
+(require "TDAUser_21337525_ZuñigaJofre.rkt")
+(require "TDAChathistory_21337525_ZuñigaJofre.rkt")
 (provide(all-defined-out))
 
 #|..........................Constructor..........................|#
