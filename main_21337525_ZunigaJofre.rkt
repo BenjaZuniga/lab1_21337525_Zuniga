@@ -4,9 +4,66 @@
 (require "TDAChatbot_21337525_ZunigaJofre.rkt")
 (require "TDAUser_21337525_ZunigaJofre.rkt")
 (require "TDAChathistory_21337525_ZunigaJofre.rkt")
-(provide(all-defined-out))
+(require "TDASystem_21337525_ZunigaJofre.rkt")
+(provide (all-defined-out))
 
-#|..........................Constructor..........................|#
+
+;Nombre de la función: option
+;Dominio: code (Int)  X message (String)  X ChatbotCodeLink (Int) X InitialFlowCodeLink (Int) X Keyword*
+;Recorrido: option
+;Tipo de recursion: Ninguna
+;Descripción de la función: Crea el TDA Option
+(define (option code message ChatbotCodeLink InicialFlowCodeLink . Keyword)
+     (list code message ChatbotCodeLink InicialFlowCodeLink
+           (append (map string-downcase Keyword)(list(~a(string-ref message 0))))))
+
+;Nombre de la función: flow
+;Dominio: id (int) X name-msg (String)  X Option*
+;Recorrido: flow
+;Tipo de recursion: Natural de la funcion new-Option
+;Descripción de la función: Crea un TDA Flow y verifica que en Option no hayan opciones repetidas
+;en base a sus ids
+(define (flow id name . Option)
+  (list id name (if(not(null? Option))
+                   (remove (list)(new-Option Option))
+                   Option)))
+
+;Nombre de la función: flow-add-option
+;Dominio: flow X option
+;Recorrido: flow
+;Tipo de recursion: Ninguna
+;Descripción de la función: Se agrega una option a Option en un flow si es que el id de la opción que se intenta agregar
+; no está repetido, sino se devuelve el flow como estaba
+(define(flow-add-option flow option)
+ (if(boolean?(member (select-option-code option)
+                     (get-option-ids (select-flow-Option flow))))
+    (list (select-flow-id flow)(select-flow-name flow)
+          (append (select-flow-Option flow)(list option)))
+    flow))
+
+;Nombre de la función: chatbot
+;Dominio: chatbotID (int) X name (String) X welcomeMessage (String) X startFlowId(int) X  flows
+;Recorrido: chatbot
+;Tipo de recursion: Natural de la funcion new-flow
+;Descripción de la función: Crea un chatbot
+(define (chatbot id name welcomeMessage startFlowId . flows)
+  (list id name welcomeMessage startFlowId (if(not(null? flows))
+                                           (remove (list)(new-flows flows))
+                                           flows)))
+
+;Nombre de la función: chatbot-add-flow
+;Dominio: chatbot X flow
+;Recorrido: chatbot
+;Tipo de recursion: Natural, de la función add-flow
+;Descripción de la función: Se ingresa un chatbot y un flow, y se reconstruye el flows de un chatbot con el flow ingresado,
+; en caso de que el id del flow esté en flows, flows queda igual, sino se agrega flow a flows y se retorna el chatbot con un
+;un flows nuevo
+(define (chatbot-add-flow chatbot flow)
+  (list(select-chatbot-id chatbot)(select-chatbot-name chatbot)
+       (select-chatbot-wM chatbot)(select-chatbot-sFId chatbot)
+       (add-flow (select-chatbot-flow chatbot)flow)))
+
+
 ;Nombre de la función: system
 ;Dominio: name (string) X InitialChatbotCodeLink (Int) X chatbot*
 ;Recorrido: system
@@ -18,67 +75,6 @@
                                (remove (list)(new-chatbot chatbot))
                                 chatbot)))
 
-#|..........................Pertenencia..........................|#
-
-#|..........................Selector..........................|#
-;Nombre de la función: select-system-InicialChatbotCodeLink
-;Dominio: system
-;Recorrido: InicialChatbotCodeLink
-;Tipo de recursion: Ninguna
-;Descripción de la función: Selecciona el InicialChatbotCodeLink de un system
-(define (select-system-InicialChatbotCodeLink sys)(car sys))
-
-;Nombre de la función: select-system-user
-;Dominio: system
-;Recorrido: user
-;Tipo de recursion: Ninguna
-;Descripción de la función: Selecciona el user de un system
-(define (select-system-user sys)(cadr sys))
-
-;Nombre de la función: select-system-chathistory
-;Dominio: system
-;Recorrido: chathistory
-;Tipo de recursion: Ninguna
-;Descripción de la función: Selecciona el chathistory de un system
-(define (select-system-chathistory sys)(caddr sys))
-
-;Nombre de la función: select-system-name
-;Dominio: system
-;Recorrido: name
-;Tipo de recursion: Ninguna
-;Descripción de la función: Selecciona el name de un system
-(define(select-system-name sys)(cadddr sys))
-
-;Nombre de la función: select-system-option-chatbots
-;Dominio: system
-;Recorrido: option-chatbots
-;Tipo de recursion: Ninguna
-;Descripción de la función: Selecciona el option-chatbots de un system
-(define(select-system-option-chatbots sys)(list-ref sys 4))
-
-;Nombre de la función: select-system-option-flows
-;Dominio: system
-;Recorrido: option-flow
-;Tipo de recursion: Ninguna
-;Descripción de la función: Selecciona el option-flows de un system
-(define(select-system-option-flows sys)(list-ref sys 5))
-
-
-;Nombre de la función: select-system-option-keywords
-;Dominio: system
-;Recorrido: option-keyword
-;Tipo de recursion: Ninguna
-;Descripción de la función: Selecciona el option-keywords de un system
-(define(select-system-option-keywords sys)(list-ref sys 6))
-
-;Nombre de la función: select-system-chatbot
-;Dominio: system
-;Recorrido: chatbot
-;Tipo de recursion: Ninguna
-;Descripción de la función: Selecciona el chatbot de un system
-(define(select-system-chatbot sys)(list-ref sys 7))
-
-#|..........................Modificador..........................|#
 ;Nombre de la función: system-add-chatbot
 ;Dominio: system X chatbot
 ;Recorrido: system
@@ -95,6 +91,7 @@
           (select-system-option-flows system) (select-system-option-keywords system)
           (append (select-system-chatbot system)(list chatbot)))
     system))
+
 
 ;Nombre de la función: system-add-user
 ;Dominio: system X user
@@ -149,7 +146,7 @@
         (list) (list)
         (select-system-chatbot sys)))
 
-#|..........................Otros..........................|#
+
 ;Nombre de la función: system-talk-rec
 ;Dominio: system X message
 ;Recorrido: system
@@ -178,37 +175,6 @@
                                           (lambda(keywords)(list? (member (string-downcase message) keywords))))) 
                     (list (~a(current-seconds))"-"(get-user-login(select-system-user system))": " message "\n")))
      system))
-;Nombre de la función: search-rec
-;Dominio: system X tdas X id1 X id2 X history
-;Recorrido: system
-;Tipo de recursion: Cola
-;Descripción de la función: Busca recursivamente el id del chatbot y el flow que corresponden al message de
-; la función system-talk-rec, devuelve un system con los ids de los chatbots y flows, y las keyword del
-; flow que se estaba buscando
-(define(search-rec system tdas id1 id2 history)
-  (cond
-       [(chatbot? (car tdas))
-        (if(equal? id1 (select-chatbot-id (car tdas)))
-           (search-rec system (select-chatbot-flow (car tdas)) "-" id2
-                             (append history (list (~a(current-seconds))"-" (select-chatbot-name (car tdas))":")))
-           (search-rec system (cdr tdas) id1 id2 history))]
-       [(flow?(car tdas))
-        (if(equal? id2 (select-flow-id(car tdas)))
-           (list (select-system-InicialChatbotCodeLink system)
-                 (select-system-user system)
-                 (list-set (select-system-chathistory system)
-                           (index-of(select-user-register(select-system-user system))(get-user-login(select-system-user system)))
-                           (append(list-ref (select-system-chathistory system)
-                                            (index-of(select-user-register(select-system-user system))
-                                                     (get-user-login(select-system-user system))))
-                                  history
-                                  (list (select-flow-name (car tdas)) "\n")
-                                  (map (lambda(message)(string-append message"\n"))
-                                       (map select-option-message (select-flow-Option (car tdas))))))
-               (select-system-name system)(get-option-chatbots-ids(select-flow-Option(car tdas)))
-               (get-option-flows-ids(select-flow-Option(car tdas)))(get-option-Keyword(select-flow-Option(car tdas)))(select-system-chatbot system))
-           (search-rec system (cdr tdas) id1 id2 history))]))
-
 
 ;Nombre de la función: system-talk-norec
 ;Dominio: system X message
@@ -318,64 +284,3 @@
                         original-seed
                         seed)]))))
   (system-simulate-int system maxInteractions seed seed)))
-
-;Nombre de la función: myRandom
-;Dominio: int
-;Recorrido: int
-;Tipo de recursion: Ninguna
-;Descripción de la función: Genera un numero pseudoaleatorio respetando el principio de
-; transparencia referencial
-(define (myRandom Xn)
-  (modulo (+ (* 1103515245 Xn) 12345) 2147483648))
-
-
-
-;Nombre de la función: new-chatbot
-;Dominio: chatbot
-;Recorrido: chatbot
-;Tipo de recursion: natural
-;Descripción de la función: Se ingresa un chatbot de un system compuesto de chatbots y se reconstruye eliminando
-; los chatbots con ids repetidos en caso de que haya, dejando un solo chatbot con el id que estaba repetido
-(define new-chatbot(lambda(chatbot)
-  (define create-chatbot(lambda(chatbot ids)
-    (if(not (null? (cdr chatbot)))
-       (if (list?(member (select-chatbot-id (car chatbot)) ids))
-        (cons(car chatbot)(create-chatbot(cdr chatbot)(remove (select-chatbot-id (car chatbot)) ids)))
-        (create-chatbot(cdr chatbot) ids ))
-       (if (list?(member (select-chatbot-id (car chatbot)) ids))
-        (cons(car chatbot) null)
-        (cons null null )))))
-                    (create-chatbot chatbot (get-chatbot-ids chatbot))))
-
-
-;Nombre de la función: get-chatbot-ids
-;Dominio: chtabot
-;Recorrido: list
-;Tipo de recursion: Ninguna
-;Descripción de la función: Obtiene los ids sin duplicados dechatbots que compones un chatbot de un system
-(define (get-chatbot-ids chatbot)
-  (if(not(null? chatbot))
-     (remove-duplicates (map select-chatbot-id chatbot))
-     (list)))
-
-;Nombre de la función: get-inicalFlowId
-;Dominio:chatbot X id
-;Recorrido: startFlowId
-;Tipo de recursion:
-;Descripción de la función: Obtiene el startFlowId del Chatbot incial del system dado por
-; el IncialChabotCodeLink del system
-(define (get-inicialFlowId chatbots id)
-  (let([chatbot (list-ref chatbots (index-of(get-chatbot-ids chatbots)id))])
-   (select-chatbot-sFId chatbot)))
-
-;Nombre de la función: maxOptions
-;Dominio: system
-;Recorrido: int
-;Tipo de recursion: Ninguna
-;Descripción de la función: Obtiene el numero maximo de opciones en un system mediante
-; el largo de option-keywords de system
-(define (maxOptions system) (-(length (select-system-option-keywords system)) 1))
-
-
-
-

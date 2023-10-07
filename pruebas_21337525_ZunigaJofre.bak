@@ -1,6 +1,10 @@
 #lang racket
-(require "main_21337525_ZunigaJofre.rkt")
-
+(require "TDAOption_21337525_ZunigaJofre.rkt")
+(require "TDAFlow_21337525_ZunigaJofre.rkt")
+(require "TDAChatbot_21337525_ZunigaJofre.rkt")
+(require "TDAUser_21337525_ZunigaJofre.rkt")
+(require "TDAChathistory_21337525_ZunigaJofre.rkt")
+(require "TDASystem_21337525_ZunigaJofre.rkt")
 
 ;Script de Pruebas Enunciado
 
@@ -53,11 +57,11 @@
 
 ;las siguientes interacciones deben funcionar de igual manera con system-talk-rec  o system-talk-norec 
 (define s11 (system-talk-rec s10 "hola"))
-(define s12 (system-talk-norec s11 "1"))
+(define s12 (system-talk-rec s11 "1"))
 (define s13 (system-talk-rec s12 "1"))
-(define s14 (system-talk-norec s13 "Museo"))
+(define s14 (system-talk-rec s13 "Museo"))
 (define s15 (system-talk-rec s14 "1"))
-(define s16 (system-talk-norec s15 "3"))
+(define s16 (system-talk-rec s15 "3"))
 (define s17 (system-talk-rec s16 "5"))
 (display (system-synthesis s17 "user2"))
 
@@ -69,9 +73,3 @@
 (define s23 (system-talk-norec s22 "3"))
 (define s24 (system-talk-norec s23 "5"))
 (display (system-synthesis s24 "user2"))
-
-(define s30(system-simulate s0 10 3214))
-(display (system-synthesis s30 "user3214"))
-
-
-
