@@ -6,6 +6,17 @@
 (require "TDAChathistory_21337525_ZunigaJofre.rkt")
 (provide(all-defined-out))
 
+#|..........................Especificación TDA System..........................|#
+;system = IncialChatbotCodeLink X user X chathistory X name X option-chatbots X option-flows X option-keywords X chatbot
+;IniciañChatbotCodeLink = int
+;user = user
+;chathistory = chathistory
+;name = string
+;option-chatbots = null | ChatbotCodeLink X option-chatbots
+;option-flows = null | InicialFlowCodeLink X option-flows
+;option-keywords = null | Keyword X option-keywords
+;chatbot = null | TDA Chatbot x chatbot
+ 
 #|..........................Constructor..........................|#
 ;Nombre de la función: system
 ;Dominio: name (string) X InitialChatbotCodeLink (Int) X chatbot*

@@ -1,7 +1,12 @@
 #lang racket
 (require "TDAOption_21337525_ZunigaJofre.rkt")
 (provide (all-defined-out))
-#|..........................TDA Flow..........................|#
+#|..........................Especificación TDA Flow..........................|#
+;flow = id X name-msg X Option
+;id = int
+;name-msg = string
+;Option = null | option X Option
+
 
 #|..........................Constructor..........................|#
 ;Nombre de la función: flow
@@ -24,6 +29,7 @@
 (define (flow? flow)
   (and (integer? (select-flow-id flow)) (string? (select-flow-name flow))
        (or (map option?(select-flow-Option flow)) (null? (select-flow-Option flow)))))
+
 #|..........................Selectores..........................|#
 ;Nombre de la función: select-flow-id
 ;Dominio: flow

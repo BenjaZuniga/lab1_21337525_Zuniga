@@ -8,19 +8,67 @@
 (provide (all-defined-out))
 
 
+#|..........Requrimiento Funcional 1..........|#
+
+;.....TDA Option
+;TDA Option = code X message X ChatbotCodeLink X InicialFlowCodeLink X Keyword
+;code = int
+;message = string
+;ChatbotCodeLink = int
+;InicialFlowCodeLink = int
+;Keyword = null | string X Keyword
+
+;.....TDA Flow
+;TDA Flow = id X name-msg X Option
+;id = int
+;name-msg = string
+;Option = null | option X Option
+
+;.....TDA Chatbot
+;TDA Chatbot = chatbotId X name X welcomeMessage X startFlowId X flows
+;chatbotId = int
+;name = string
+;welcomeMessage = string
+;startFlowId = int
+;flows = null | flow X flows
+
+;.....TDA System
+;TDA System = IncialChatbotCodeLink X user X chathistory X name X option-chatbots X option-flows X option-keywords X chatbot
+;IniciañChatbotCodeLink = int
+;user = user
+;chathistory = chathistory
+;name = string
+;option-chatbots = null | ChatbotCodeLink X option-chatbots
+;option-flows = null | InicialFlowCodeLink X option-flows
+;option-keywords = null | Keyword X option-keywords
+;chatbot = null | TDA Chatbot x chatbot
+
+;.....TDA User
+;TDA User = user-register X user-login
+;user-register= null | string X user-register
+;user-login = string X null
+
+;.....TDA Chathistory
+;TDA Chathistory =null | list X TDAChathistory
+
+#|..........Requrimiento Funcional 2..........|#
+
 ;Nombre de la función: option
 ;Dominio: code (Int)  X message (String)  X ChatbotCodeLink (Int) X InitialFlowCodeLink (Int) X Keyword*
 ;Recorrido: option
 ;Tipo de recursion: Ninguna
+;Funciones extra: Ninguna
 ;Descripción de la función: Crea el TDA Option
 (define (option code message ChatbotCodeLink InicialFlowCodeLink . Keyword)
      (list code message ChatbotCodeLink InicialFlowCodeLink
            (append (map string-downcase Keyword)(list(~a(string-ref message 0))))))
 
+#|..........Requrimiento Funcional 3..........|#
 ;Nombre de la función: flow
 ;Dominio: id (int) X name-msg (String)  X Option*
 ;Recorrido: flow
 ;Tipo de recursion: Natural de la funcion new-Option
+;Funciones extra [nombre(ubicación)]: new-Option(TDAOption_21337525_ZunigaJofre)
 ;Descripción de la función: Crea un TDA Flow y verifica que en Option no hayan opciones repetidas
 ;en base a sus ids
 (define (flow id name . Option)
@@ -28,10 +76,13 @@
                    (remove (list)(new-Option Option))
                    Option)))
 
+#|..........Requrimiento Funcional 4..........|#
+
 ;Nombre de la función: flow-add-option
 ;Dominio: flow X option
 ;Recorrido: flow
 ;Tipo de recursion: Ninguna
+;Funciones extra [nombre(ubicación)]: get-option-ids(TDAFlow_21337525_ZunigaJofre)
 ;Descripción de la función: Se agrega una option a Option en un flow si es que el id de la opción que se intenta agregar
 ; no está repetido, sino se devuelve el flow como estaba
 (define(flow-add-option flow option)
@@ -41,20 +92,26 @@
           (append (select-flow-Option flow)(list option)))
     flow))
 
+#|..........Requrimiento Funcional 5..........|#
+
 ;Nombre de la función: chatbot
 ;Dominio: chatbotID (int) X name (String) X welcomeMessage (String) X startFlowId(int) X  flows
 ;Recorrido: chatbot
 ;Tipo de recursion: Natural de la funcion new-flow
+;Funciones extra [nombre(ubicación)]: new-flow(TDAChatbot_21337525_ZunigaJofre)
 ;Descripción de la función: Crea un chatbot
 (define (chatbot id name welcomeMessage startFlowId . flows)
   (list id name welcomeMessage startFlowId (if(not(null? flows))
                                            (remove (list)(new-flows flows))
                                            flows)))
 
+#|..........Requrimiento Funcional 6..........|#
+
 ;Nombre de la función: chatbot-add-flow
 ;Dominio: chatbot X flow
 ;Recorrido: chatbot
 ;Tipo de recursion: Natural, de la función add-flow
+;Funciones extra [nombre(ubicación)]: add-flow(TDAChatbot_21337525_ZunigaJofre)
 ;Descripción de la función: Se ingresa un chatbot y un flow, y se reconstruye el flows de un chatbot con el flow ingresado,
 ; en caso de que el id del flow esté en flows, flows queda igual, sino se agrega flow a flows y se retorna el chatbot con un
 ;un flows nuevo
@@ -63,11 +120,13 @@
        (select-chatbot-wM chatbot)(select-chatbot-sFId chatbot)
        (add-flow (select-chatbot-flow chatbot)flow)))
 
+#|..........Requrimiento Funcional 7..........|#
 
 ;Nombre de la función: system
 ;Dominio: name (string) X InitialChatbotCodeLink (Int) X chatbot*
 ;Recorrido: system
 ;Tipo de recursion: Natural, de la función new-chatbot
+;Funciones extra [nombre(ubicación)]: new-chatbot(TDASystem_21337525_ZunigaJofre)
 ;Descripción de la función: Crea un system
 (define (system name InicialChatbotCodeLink . chatbot)
   (list InicialChatbotCodeLink user chathistory name
@@ -75,10 +134,13 @@
                                (remove (list)(new-chatbot chatbot))
                                 chatbot)))
 
+#|..........Requrimiento Funcional 8.........|#
+
 ;Nombre de la función: system-add-chatbot
 ;Dominio: system X chatbot
 ;Recorrido: system
 ;Tipo de recursion: Ninguna
+;Funciones extra [nombre(ubicación)]: get-chatbot-ids(TDASystem_21337525_ZunigaJofre)
 ;Descripción de la función: Verifica si un chatbot está en un chatbot de un system en base a su id,
 ; y si no está reconstruye un system con el nuevo chatbot, si el id está repetido devuelve
 ; el system como estaba
@@ -92,11 +154,13 @@
           (append (select-system-chatbot system)(list chatbot)))
     system))
 
+#|..........Requrimiento Funcional 9..........|#
 
 ;Nombre de la función: system-add-user
 ;Dominio: system X user
 ;Recorrido: system
 ;Tipo de recursion: Ninguna
+;Funciones extra [nombre(ubicación)]: Ninguna
 ;Descripción de la función: Se ingresa un system y un user, y se registra en el user del system
 ; en caso de que este no esté registrado, si ya está registrado devuelve el system como estaba, con
 ; un solo registro en el system del user
@@ -111,12 +175,14 @@
           (select-system-option-flows system) (select-system-option-keywords system)
           (select-system-chatbot system))
      system))
-    
+
+#|..........Requrimiento Funcional 10..........|#
 
 ;Nombre de la función: system-login
 ;Dominio: system X user
 ;Recorrido: system
 ;Tipo de recursion: Ninguna
+;Funciones extra [nombre(ubicación)]: Ninguna
 ;Descripción de la función: Deja un user como logeado dentro del system en caso de que no haya un user
 ; logeado y el user esté en los registrados del system
 (define(system-login sys user)
@@ -132,10 +198,13 @@
            (select-system-chatbot sys))
         sys))
 
+#|..........Requrimiento Funcional 11..........|#
+
 ;Nombre de la función: system-logout
 ;Dominio: system
 ;Recorrido: system
 ;Tipo de recursion: Ninguna
+;Funciones extra [nombre(ubicación)]: Ninguna
 ;Descripción de la función: Devuelve el system con un user
 (define (system-logout sys)
   (list (select-system-InicialChatbotCodeLink sys)
@@ -146,11 +215,13 @@
         (list) (list)
         (select-system-chatbot sys)))
 
+#|..........Requrimiento Funcional 12..........|#
 
 ;Nombre de la función: system-talk-rec
 ;Dominio: system X message
 ;Recorrido: system
 ;Tipo de recursion: Cola, de la función search-rec
+;Funciones extra [nombre(ubicación)]: search-rec(TDASystem_21337525_ZunigaJofre)
 ;Descripción de la función: Pertmite a un usuario logeado hablar con el system, en caso de que no haya un
 ; usuario logeado se devuelve el system como estaba, en caso de que haya un usuario logeado
 ; si no se ha iniciado una conversacion se devuelven las optiones que contienen el flujo inicial del system
@@ -158,30 +229,37 @@
 ; inicial, en caso de que hay una coversación iniciada se busca el message en las option-keyword del system
 ; y se buscan las nuevas opciones con los ids de chatbots y flows asociados a las option-keywords, mediante
 ; la función search-rec y almacena la conversacion en un historial unico que corresponde al usuario logeado
+; si no se encuentra el mensaje devuelve el sistema como estaba
 (define (system-talk-rec system message)
   (if(not(empty? (select-user-login(select-system-user system))))
      (if(empty?(select-system-option-keywords system))
         (search-rec system
-                          (select-system-chatbot system)
-                          (select-system-InicialChatbotCodeLink system)
-                          (get-inicialFlowId(select-system-chatbot system)(select-system-InicialChatbotCodeLink system)) 
-                          (list (~a(current-seconds))"-"(get-user-login(select-system-user system))": " message "\n"))
-        (search-rec system (select-system-chatbot system)
+                   (select-system-chatbot system)
+                   (select-system-InicialChatbotCodeLink system)
+                   (get-inicialFlowId(select-system-chatbot system)(select-system-InicialChatbotCodeLink system)) 
+                   (list (~a(current-seconds))"-"(get-user-login(select-system-user system))": " message "\n"))
+        (if(list? (member message (flatten (select-system-option-keywords system))))
+         (search-rec system (select-system-chatbot system)
                     (list-ref (select-system-option-chatbots system)
                               (index-where(select-system-option-keywords system)
                                           (lambda(keywords)(list? (member (string-downcase message) keywords)))))
                     (list-ref (select-system-option-flows system)
                               (index-where(select-system-option-keywords system)
                                           (lambda(keywords)(list? (member (string-downcase message) keywords))))) 
-                    (list (~a(current-seconds))"-"(get-user-login(select-system-user system))": " message "\n")))
+                    (list (~a(current-seconds))"-"(get-user-login(select-system-user system))": " message "\n"))
+         system))
      system))
+
+#|..........Requrimiento Funcional 13..........|#
 
 ;Nombre de la función: system-talk-norec
 ;Dominio: system X message
 ;Recorrido: system
 ;Tipo de recursion: Ninguna
+;Funciones extra [nombre(ubicación)]: Ninguna
 ;Descripción de la función: Funciona igual que system-talk-rec sin recursion, permitiendo al usuario logeado
 ; hablar con el sistema y almacenando la conversacion en un historial
+; si no se encuentra el mensaje devuelve el sistema como estaba
 (define (system-talk-norec system message)
   (if(not(empty?(select-user-login(select-system-user system))))
      (if(empty?(select-system-option-keywords system))
@@ -208,7 +286,8 @@
                       (get-option-Keyword(select-flow-Option flow))
                       (select-system-chatbot system))))
           
-        (let([chatbot(list-ref (select-system-chatbot system)
+        (if(list? (member message (flatten (select-system-option-keywords system))))
+         (let([chatbot(list-ref (select-system-chatbot system)
             (index-of (get-chatbot-ids (select-system-chatbot system))
                       (list-ref (select-system-option-chatbots system)
                               (index-where(select-system-option-keywords system)
@@ -233,25 +312,32 @@
                       (get-option-chatbots-ids(select-flow-Option flow))
                       (get-option-flows-ids(select-flow-Option flow))
                       (get-option-Keyword(select-flow-Option flow))
-                      (select-system-chatbot system)))))
+                      (select-system-chatbot system))))
+         system))
      system))
+
+#|..........Requrimiento Funcional 14..........|#
 
 ;Nombre de la función: system-synthesis
 ;Dominio: system X user
 ;Recorrido: string
 ;Tipo de recursion: Ninguna
+;Funciones extra [nombre(ubicación)]: Ninguna
 ;Descripción de la función: Devuelve el string que corresponde al historial del usuario ingresado, en caso
-;de que no exista el usuario devuelve un mensaje en especial
+;de que no exista el usuario devuelve un mensaje en indicando el error
 (define(system-synthesis system user)
   (if(list? (member user (select-user-register(select-system-user system))))
      (list-ref (select-system-chathistory system)
             (index-of (select-user-register(select-system-user system))user))
   "No existe el usuario ingresado en el sistema\n"))
 
+#|..........Requrimiento Funcional 15..........|#
+
 ;Nombre de la función: system-simulate
 ;Dominio: system X maxInteractions X seed
 ;Recorrido: system
 ;Tipo de recursion: Natural de la función interna y Cola de system-talk-rec
+;Funciones extra [nombre(ubicación)]: myRandom(TDASystem_21337525_ZunigaJofre)
 ;Descripción de la función: Permite simular unas interacciones psudoaleatorias con un system
 ; mediante una seed, el numero maximo de interacciones está dado por maxInteracions y dependiendo
 ; de la seed la conversación generada es distinta, pero se asegura que la simulación es la misma

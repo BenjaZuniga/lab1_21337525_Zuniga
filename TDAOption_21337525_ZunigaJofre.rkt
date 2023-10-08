@@ -1,12 +1,24 @@
 #lang racket
 (provide (all-defined-out))
 
-#|..........................TDA Option..........................|#
-
+#|..........................Espicificación TDA Option ..........................|#
+;option = code X message X ChatbotCodeLink X InicialFlowCodeLink X Keyword
+;code = int
+;message = string
+;ChatbotCodeLink = int
+;InicialFlowCodeLink = int
+;Keyword = null | string X Keyword
 
 
 #|..........................Constructor..........................|#
-
+;Nombre de la función: option
+;Dominio: code (Int)  X message (String)  X ChatbotCodeLink (Int) X InitialFlowCodeLink (Int) X Keyword*
+;Recorrido: option
+;Tipo de recursion: Ninguna
+;Descripción de la función: Crea el TDA Option
+(define (option code message ChatbotCodeLink InicialFlowCodeLink . Keyword)
+     (list code message ChatbotCodeLink InicialFlowCodeLink
+           (append (map string-downcase Keyword)(list(~a(string-ref message 0))))))
 
 #|..........................Pertenencia..........................|#
 ;Nombre de la función: option?

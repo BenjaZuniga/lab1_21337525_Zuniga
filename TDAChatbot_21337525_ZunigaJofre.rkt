@@ -2,6 +2,13 @@
 (require "TDAOption_21337525_ZunigaJofre.rkt")
 (require "TDAFlow_21337525_ZunigaJofre.rkt")
 (provide (all-defined-out))
+#|..........................Especificación TDA Chatbot..........................|#
+;chatbot = chatbotId X name X welcomeMessage X startFlowId X flows
+;chatbotId = int
+;name = string
+;welcomeMessage = string
+;startFlowId = int
+;flows = null | flow X flows
 
 #|..........................Constructor..........................|#
 ;Nombre de la función: chatbot
@@ -9,10 +16,10 @@
 ;Recorrido: chatbot
 ;Tipo de recursion: Natural de la funcion new-flow
 ;Descripción de la función: Crea un chatbot
-(define (chatbot id name welcomeMessage startFlowId . flows)
-  (list id name welcomeMessage startFlowId (if(not(null? flows))
-                                           (remove (list)(new-flows flows))
-                                           flows)))
+;(define (chatbot id name welcomeMessage startFlowId . flows)
+; (list id name welcomeMessage startFlowId (if(not(null? flows))
+;                                           (remove (list)(new-flows flows))
+;                                          flows)))
 #|..........................Pertenencia..........................|#
 ;Nombre de la función: chatbot?
 ;Dominio: list
@@ -23,21 +30,6 @@
   (and(integer? (select-chatbot-id chatbot)) (string? (select-chatbot-name chatbot))
       (string? (select-chatbot-wM chatbot)) (integer?(select-chatbot-sFId chatbot))
       (or(empty?(select-chatbot-flow chatbot)) (map flow?(select-chatbot-flow chatbot)))))
-
-#|..........................Modificadores..........................|#
-;Nombre de la función: chatbot-add-flow
-;Dominio: chatbot X flow
-;Recorrido: chatbot
-;Tipo de recursion: Natural, de la función add-flow
-;Descripción de la función: Se ingresa un chatbot y un flow, y se reconstruye el flows de un chatbot con el flow ingresado,
-; en caso de que el id del flow esté en flows, flows queda igual, sino se agrega flow a flows y se retorna el chatbot con un
-;un flows nuevo
-(define (chatbot-add-flow chatbot flow)
-  (list(select-chatbot-id chatbot)(select-chatbot-name chatbot)
-       (select-chatbot-wM chatbot)(select-chatbot-sFId chatbot)
-       (add-flow (select-chatbot-flow chatbot)flow)))
-
-
 
 #|..........................Selectores..........................|#
 ;Nombre de la función: select-chatbot-id
@@ -74,6 +66,19 @@
 ;Tipo de recursion: Ninguna
 ;Descripción de la función: Selecciona el flows de un chatbot
 (define(select-chatbot-flow chatbot)(list-ref chatbot 4))
+
+#|..........................Modificadores..........................|#
+;Nombre de la función: chatbot-add-flow
+;Dominio: chatbot X flow
+;Recorrido: chatbot
+;Tipo de recursion: Natural, de la función add-flow
+;Descripción de la función: Se ingresa un chatbot y un flow, y se reconstruye el flows de un chatbot con el flow ingresado,
+; en caso de que el id del flow esté en flows, flows queda igual, sino se agrega flow a flows y se retorna el chatbot con un
+;un flows nuevo
+(define (chatbot-add-flow chatbot flow)
+  (list(select-chatbot-id chatbot)(select-chatbot-name chatbot)
+       (select-chatbot-wM chatbot)(select-chatbot-sFId chatbot)
+       (add-flow (select-chatbot-flow chatbot)flow)))
 
 #|..........................Otros..........................|#
 ;Nombre de la función: new-flows

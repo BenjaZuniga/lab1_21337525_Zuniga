@@ -1,6 +1,9 @@
 #lang racket
 (provide(all-defined-out))
-
+#|..........................Especificación TDA User..........................|#
+;user = user-register X user-login
+;user-register= null | string X user-register
+;user-login = string X null
 #|..........................Constructor..........................|#
 ;Nombre de la función: user
 ;Dominio: 
